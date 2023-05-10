@@ -22,8 +22,10 @@ const MONGODB_URL=process.env.mongodb;
 mongoose.Promise = global.Promise;
 
 require("./models/User");
+require("./models/FbUser");
 
 const User = mongoose.model("User");
+const FbUser = mongoose.model("FbUser");
 
 mongoose.connect(MONGODB_URL, {
   useNewUrlParser: true,
@@ -52,6 +54,16 @@ app.post('/signup', async (req,res)=>{
     }
 })
 
+app.post('/register/fbuser', async (req,res) => {
+    const { name, email, fbid } = req.body;
+    const user = await FbUser.findOne({fbid}).lean()
+    if(!user){
+        const response = await FbUser.create({name, email, fbid})
+        return res.send({status: 'success', data: response});
+    }else{
+        return res.send({status: 'success', data: user});
+    }
+})
 
 // user login function
 const verifyUserLogin = async (phone, password)=>{
