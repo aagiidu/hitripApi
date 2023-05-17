@@ -48,7 +48,7 @@ deleteZar = async (req, res) => {
 
 deleteAllZar = async (req, res) => {
     const deleted = await Zar.deleteMany({});
-    return res.send({status: 'success', data: response, deleted});
+    return res.send({status: 'success'});
 }
 
 module.exports = {
