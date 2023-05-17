@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const zarSchema = new mongoose.Schema({
     title:{type: String, required:true},
     body: {type: String, required:true},
-    phone: {type: Number},
+    name: {type: String},
+    fbid: {type: String},
     featured: {type: Number, default: 0},
     timestamp: {type: Date, default: new Date()}
 });
