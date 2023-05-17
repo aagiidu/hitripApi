@@ -46,10 +46,16 @@ deleteZar = async (req, res) => {
     return res.send({status: 'success', data: response, deleted});
 }
 
+deleteAllZar = async (req, res) => {
+    const deleted = await Zar.delete();
+    return res.send({status: 'success', data: response, deleted});
+}
+
 module.exports = {
     getUserData,
     addZar,
     zarList,
     myZar,
-    deleteZar
+    deleteZar,
+    deleteAllZar
 }
