@@ -118,7 +118,7 @@ const verifyToken = (req, res, next)=>{
         }
         const verify = jwt.verify(token, JWT_SECRET);
         console.log('verifyToken', verify);
-        if(verify.type === 'user'){
+        if(verify){
             // console.log('userdatafromtoken', verify);
             req.body.userData = verify
             return next();
