@@ -56,18 +56,20 @@ app.post('/signup', async (req,res)=>{
 
 app.post('/register/fbuser', async (req,res) => {
     const { name, email, fbid } = req.body;
-    const user = await FbUser.findOne({fbid}).lean()
+    const user = await FbUser.findOne({fbid}).lean();
     if(!user){
-        const response = await FbUser.create({name, email, fbid})
-        return res.send({status: 'success', data: response});
+        const response = await FbUser.create({name, email, fbid});
+        const token = signToken(response);
+        return res.send({status: 'success', data: response, token});
     }else{
-        return res.send({status: 'success', data: user});
+        const token = signToken(user);
+        return res.send({status: 'success', data: user, token});
     }
 })
 
 // user login function
-const verifyUserLogin = async (phone, password)=>{
-    try {
+const verifyUserLogin = async (phone, password) => {
+    try { 
         const user = await User.findOne({phone}).lean()
         // const mId = mongoose.Types.ObjectId(id);
         // const user = await User.findById(mId).lean()
@@ -76,7 +78,7 @@ const verifyUserLogin = async (phone, password)=>{
         }
         if(await bcrypt.compare(password,user.password)){
             // creating a JWT token
-            token = jwt.sign({id:user._id, phone: user.phone, status: user.status, package: user.package, type:'user'}, JWT_SECRET, { expiresIn: '2h'})
+            const token = signToken({id:user._id, phone: user.phone, status: user.status, package: user.package, type:'user'});
             return {status:'ok', data:token}
         }
         return {status:'error',error:'Нэвтрэх мэдээлэл буруу байна'}
@@ -84,6 +86,10 @@ const verifyUserLogin = async (phone, password)=>{
         console.log(error);
         return {status:'error',error:'timed out'}
     }
+}
+
+const signToken = (data) => {
+    return jwt.sign(data, JWT_SECRET, { expiresIn: '2h'})
 }
 
 // login 
