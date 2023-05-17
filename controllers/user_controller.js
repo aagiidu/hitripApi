@@ -47,7 +47,7 @@ deleteZar = async (req, res) => {
 }
 
 deleteAllZar = async (req, res) => {
-    const deleted = await Zar.delete();
+    const deleted = await Zar.remove({});
     return res.send({status: 'success', data: response, deleted});
 }
 
