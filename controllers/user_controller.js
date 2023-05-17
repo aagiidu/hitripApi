@@ -42,7 +42,7 @@ myZar = async (req, res) => {
 
 deleteZar = async (req, res) => {
     const {userData, id} = req.body;
-    const deleted = await Zar.deleteOne({_id: new ObjectId(id)});
+    const deleted = await Zar.deleteOne({_id: new ObjectId(id), fbid: userData.fbid});
     const response = await Zar.find({fbid: userData.fbid}).sort({featured: -1, _id: -1}).limit(100);
     return res.send({status: 'success', data: response, deleted});
 }
