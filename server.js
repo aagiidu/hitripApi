@@ -117,6 +117,7 @@ const verifyToken = (req, res, next)=>{
             return res.send({status:'error',error:'no token'});
         }
         const verify = jwt.verify(token, JWT_SECRET);
+        console.log('verifyToken', verify);
         if(verify.type === 'user'){
             // console.log('userdatafromtoken', verify);
             req.body.userData = verify
