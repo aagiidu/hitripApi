@@ -6,13 +6,13 @@ const Zar = mongoose.model("Zar");
 var ObjectId = require('mongodb').ObjectId;
 
 getUserData = async (req, res) => {
-    const { userData } = req.body
+    const { userData, token } = req.body
     console.log('########### getUserData ############', userData);
     const user = await FbUser.findOne({fbid: userData.fbid}).lean()
     if(!user){
         return res.send({status: 'error', data: 'Хэрэглэгч олдсонгүй'});
     }
-    return res.status(200).send({status: 'success', user});
+    return res.status(200).send({status: 'success', user, token });
 }
 
 addZar = async (req, res) => {

@@ -129,7 +129,8 @@ const verifyToken = (req, res, next) => {
         console.log('verifyToken', verify);
         if(verify){
             // console.log('userdatafromtoken', verify);
-            req.body.userData = verify
+            req.body.userData = verify;
+            req.body.token = token;
             return next();
         }else{
             return res.send({status:'error', error:'no user'});
