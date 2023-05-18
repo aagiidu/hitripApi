@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const zarSchema = new mongoose.Schema({
-    title:{type: String, required:true},
     body: {type: String, required:true},
     name: {type: String},
     fbid: {type: String},

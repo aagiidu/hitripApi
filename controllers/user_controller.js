@@ -16,12 +16,12 @@ getUserData = async (req, res) => {
 }
 
 addZar = async (req, res) => {
-    const {title, body, userData} = req.body
+    const { body, userData } = req.body
     console.log('userdata in controller', userData);
     try {
         const {name, fbid} = userData;
         const response = await Zar.create({
-            title, body, name, fbid
+            body, name, fbid
         })
         return res.status(200).send({status: 'success', data: response});
     } catch (error) {
