@@ -23,7 +23,7 @@ mongoose.Promise = global.Promise;
 
 require("./models/User");
 require("./models/FbUser");
-require("../models/Zar");
+require("./models/Zar");
 const Zar = mongoose.model("Zar");
 const User = mongoose.model("User");
 const FbUser = mongoose.model("FbUser");
@@ -94,7 +94,7 @@ const signToken = (data) => {
 }
 
 // login 
-app.post('/login', async(req, res)=>{
+app.post('/login', async (req, res) => {
     const {phone, password} = req.body;
     // we made a function to verify our user login
     const response = await verifyUserLogin(phone, password);
