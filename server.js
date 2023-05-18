@@ -57,7 +57,7 @@ app.post('/signup', async (req,res)=>{
 
 app.post('/register/fbuser', async (req,res) => {
     const { name, email, fbid, image } = req.body;
-    const user = await FbUser.findOne({fbid}).lean();
+    let user = await FbUser.findOne({fbid}).lean();
     let response;
     if(!user){
         response = await FbUser.create({name, email, fbid, image});
@@ -65,8 +65,9 @@ app.post('/register/fbuser', async (req,res) => {
         return res.send({status: 'success', data: response, token});
     }else{
         response = await FbUser.updateOne({fbid},{$set: {name, email, image}});
-        const token = signToken(response);
-        return res.send({status: 'success', data: response, token});
+        let user = await FbUser.findOne({fbid}).lean();
+        const token = signToken(user);
+        return res.send({status: 'success', data: user, token});
     }
 })
 
