@@ -29,10 +29,10 @@ addZar = async (req, res) => {
     }
 }
 
-zarList = async (req, res) => {
+/* zarList = async (req, res) => {
     const response = await Zar.find().sort({featured: -1, _id: -1}).limit(100);
     return res.send({status: 'success', data: response });
-}
+} */
 
 myZar = async (req, res) => {
     const userData = req.body.userData;
@@ -55,7 +55,6 @@ deleteAllZar = async (req, res) => {
 module.exports = {
     getUserData,
     addZar,
-    zarList,
     myZar,
     deleteZar,
     deleteAllZar

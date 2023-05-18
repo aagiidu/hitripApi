@@ -106,6 +106,11 @@ app.post('/login', async(req, res)=>{
     }
 })
 
+app.get('/zar/list', async (req, res) => {
+    const response = await Zar.find().sort({featured: -1, _id: -1}).limit(100);
+    return res.send({status: 'success', data: response });
+});
+
 const verifyToken = (req, res, next)=>{
     try {
         // res.send({headers: req.headers})
