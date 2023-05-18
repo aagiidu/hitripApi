@@ -64,7 +64,7 @@ app.post('/register/fbuser', async (req,res) => {
         const token = signToken(response);
         return res.send({status: 'success', data: response, token});
     }else{
-        response = await FbUser.updateOne({fbid},{$set: {name, email, fbid, image}});
+        response = await FbUser.updateOne({fbid},{$set: {name, email, image}});
         const token = signToken(response);
         return res.send({status: 'success', data: response, token});
     }
