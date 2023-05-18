@@ -9,7 +9,7 @@ getUserData = async (req, res) => {
     const { userData } = req.body
     const user = await FbUser.findOne({fbid: userData.fbid}).lean()
     if(!user){
-        return res.status(404).send({status: 'error', data: 'Хэрэглэгч олдсонгүй'});
+        return res.send({status: 'error', data: 'Хэрэглэгч олдсонгүй'});
     }
     return res.status(200).send({status: 'success', user});
 }
