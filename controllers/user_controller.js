@@ -12,7 +12,7 @@ getUserData = async (req, res) => {
     if(!user){
         return res.send({status: 'error', data: 'Хэрэглэгч олдсонгүй'});
     }
-    return res.status(200).send({status: 'success', user, token });
+    return res.status(200).send({status: 'success', data: user, token });
 }
 
 addZar = async (req, res) => {
