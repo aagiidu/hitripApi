@@ -8,5 +8,6 @@ router.post('/zar/add', UserController.addZar);
 router.post('/zar/delete', UserController.deleteZar);
 router.get('/my/zar', UserController.myZar);
 router.get('/delete/all/zar', UserController.deleteAllZar);
+router.get('/verify/token', UserController.verifyToken);
 
 module.exports = router;

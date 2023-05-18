@@ -11,7 +11,7 @@ getUserData = async (req, res) => {
     if(!user){
         return res.status(404).send({status: 'error', data: 'Хэрэглэгч олдсонгүй'});
     }
-    return res.status(200).send({user});
+    return res.status(200).send({status: 'success', user});
 }
 
 addZar = async (req, res) => {
@@ -52,10 +52,15 @@ deleteAllZar = async (req, res) => {
     return res.send({status: 'success'});
 }
 
+verifyToken = async (req, res) => {
+    return res.send({status: 'success'});
+}
+
 module.exports = {
     getUserData,
     addZar,
     myZar,
     deleteZar,
-    deleteAllZar
+    deleteAllZar,
+    verifyToken
 }

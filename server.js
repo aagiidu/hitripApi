@@ -56,15 +56,17 @@ app.post('/signup', async (req,res)=>{
 })
 
 app.post('/register/fbuser', async (req,res) => {
-    const { name, email, fbid } = req.body;
+    const { name, email, fbid, image } = req.body;
     const user = await FbUser.findOne({fbid}).lean();
+    let response;
     if(!user){
-        const response = await FbUser.create({name, email, fbid});
+        response = await FbUser.create({name, email, fbid, image});
         const token = signToken(response);
         return res.send({status: 'success', data: response, token});
     }else{
-        const token = signToken(user);
-        return res.send({status: 'success', data: user, token});
+        response = await FbUser.updateOne({fbid},{$set: {name, email, fbid, image}});
+        const token = signToken(response);
+        return res.send({status: 'success', data: response, token});
     }
 })
 
@@ -112,7 +114,7 @@ app.get('/zar/list', async (req, res) => {
     return res.send({status: 'success', data: response });
 });
 
-const verifyToken = (req, res, next)=>{
+const verifyToken = (req, res, next) => {
     try {
         // res.send({headers: req.headers})
         let token = null;
