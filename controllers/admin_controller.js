@@ -27,7 +27,7 @@ updateBlog = async (req, res) => {
     }
     console.log('req.body', id, title, description, image, userData);
     //try {
-        const response = await Blog.update({_id: new ObjectId(id)}, {$set: {
+        const response = await Blog.updateOne({_id: new ObjectId(id)}, {$set: {
             title, description, image
         }});
         console.log(response);
