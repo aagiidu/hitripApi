@@ -25,17 +25,14 @@ updateBlog = async (req, res) => {
     if(userData.type !== 'admin'){
         return res.status(200).send({status: 'error', data: 'Зөвхөн админ засвар оруулна'});
     }
-    console.log('req.body', id, title, description, image, userData);
-    //try {
+    try {
         const response = await Blog.updateOne({_id: new ObjectId(id)}, {$set: {
             title, description, image
         }});
-        console.log(response);
         return res.status(200).send({status: 'success', data: response});
-    /* } catch (error) {
-        console.log(JSON.stringify(error));
+    } catch (error) {
         return res.status(200).send({status: 'error', data: error});
-    } */
+    }
 }
 
 deleteBlog = async (req, res) => {
