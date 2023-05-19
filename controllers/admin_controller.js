@@ -41,7 +41,7 @@ deleteBlog = async (req, res) => {
         return res.status(200).send({status: 'error', data: 'Энэ үйлдлийн зөвхөн админ хийнэ'});
     }
     const deleted = await Blog.deleteOne({_id: new ObjectId(id)});
-    const response = await Blog.find({}).sort({timestamp: -1}).limit(100);
+    const response = await Blog.find({}).sort({_id: -1}).limit(100);
     return res.send({status: 'success', data: response, deleted});
 }
 
