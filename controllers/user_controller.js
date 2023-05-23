@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { uuid } = require('uuidv4');
 const mongoose= require('mongoose');
 require("../models/FbUser");
 require("../models/Zar");
@@ -81,17 +82,50 @@ requestInvoice = async (req, res) => {
             'Content-Type': 'application/json',
         },
     })
-    .then(response => {
+    .then(async response => {
         console.log('requestInvoice Response:', response.data);
+        const response = await getInvoiceFromQpay(token, userData, tripCode, amount)
         return res.status(200).send({status: 'success', data: response.data, tripCode, amount });
     })
     .catch(error => {
         console.error('requestInvoice Error:', error.response.data);
         return res.status(200).send({status: 'error', data: error.response.data, tripCode, amount });
     });
-
-    // return res.status(200).send({status: 'success', data: user, token });
 }
+
+getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
+    const invoiceId = uuid();
+    const postData = {
+        "invoice_code": "TEST_INVOICE",
+        "sender_invoice_no": invoiceId,
+        "invoice_receiver_code": userData.fbid, // ?? 
+        "sender_branch_code":"APP",
+        "invoice_description": tripCode,
+        "enable_expiry": false,
+        "allow_partial": false,
+        "allow_exceed": false,
+        "amount": amount,
+        "callback_url": "https://api.hitrip.mn/trip/list",
+        "tax_customer_code": "5395305"
+    };
+    console.log('Qpay query', postData);
+    axios.post('https://merchant.qpay.mn/v2/invoice', postData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        console.log('Invoice Response:', response.data);
+        return {'qstatus': 'success', data: response.data};
+    })
+    .catch(error => {
+        console.error('Invoice Error:', error.response.data);
+        return {'qstatus': 'error', data: error.response.data};
+    });
+}
+
+
 
 module.exports = {
     getUserData,
