@@ -124,8 +124,11 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
             },
         })
         .then(response => {
-            console.log('Invoice Response:', response.data);
-            resolve({'qstatus': 'success', data: response.data});
+            let q = response.data;
+            delete q.qr_text
+            delete q.qr_image
+            console.log('Invoice Response:', q);
+            resolve(q);
         })
         .catch(error => {
             console.error('Invoice Error:', error);
