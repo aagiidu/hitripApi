@@ -1,5 +1,5 @@
 const axios = require('axios');
-import { v4 as uuid } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 const mongoose= require('mongoose');
 require("../models/FbUser");
 require("../models/Zar");
@@ -96,7 +96,7 @@ requestInvoice = async (req, res) => {
 }
 
 getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
-    const invoiceId = uuid();
+    const invoiceId = uuidv4();
     const postData = {
         "invoice_code": "TEST_INVOICE",
         "sender_invoice_no": invoiceId,
