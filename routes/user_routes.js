@@ -9,5 +9,7 @@ router.post('/zar/delete', UserController.deleteZar);
 router.get('/my/zar', UserController.myZar);
 router.get('/delete/all/zar', UserController.deleteAllZar);
 router.get('/verify/token', UserController.verifyToken);
+router.post('/toggle/status', UserController.turnOnOff);
+router.post('/request/invoice', UserController.requestInvoice);
 
 module.exports = router;
