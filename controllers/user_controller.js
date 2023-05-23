@@ -73,60 +73,64 @@ turnOnOff = async (req, res) => {
 requestInvoice = async (req, res) => {
     const { userData, tripCode, amount } = req.body
     // const user = await FbUser.findOne({fbid: userData.fbid}).lean();
+    const token = await getTokenFromQpay();
+    const invoice = await getInvoiceFromQpay(token, userData, tripCode, amount);
+    return res.status(200).send({status: 'success', data: invoice });
+}
 
-    const authHeader = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
-
-    axios.post('https://merchant.qpay.mn/v2/auth/token', {}, {
-        headers: {
-            Authorization: authHeader,
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(async response => {
-        console.log('requestInvoice Response:', response.data);
-        const token = response.data.access_token
-        console.log('Qpay #1');
-        return await getInvoiceFromQpay(token, userData, tripCode, amount)
-    })
-    .then(qres => {
-        console.log('Qpay #2', qres);
-        return res.status(200).send({status: 'success', data: qres, tripCode, amount });
-    })
-    .catch(error => {
-        console.error('requestInvoice Error:', error);
-        return res.status(200).send({status: 'error', data: error, tripCode, amount });
+getTokenFromQpay = async () => {
+    return new Promise((resolve, reject) => {
+        const authHeader = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
+        axios.post('https://merchant.qpay.mn/v2/auth/token', {}, {
+            headers: {
+                Authorization: authHeader,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(async response => {
+            console.log('requestInvoice Response:', response.data);
+            const token = response.data.access_token
+            resolve(token);
+        })
+        .catch(error => {
+            console.error('requestInvoice Error:', error);
+            reject(error);
+        });
+        
     });
 }
 
 getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
-    const invoiceId = uuidv4();
-    const postData = {
-        "invoice_code": "TEST_INVOICE",
-        "sender_invoice_no": invoiceId,
-        "invoice_receiver_code": `${userData.fbid}`, // ?? 
-        "sender_branch_code":"APP",
-        "invoice_description": tripCode,
-        "enable_expiry": "false",
-        "allow_partial": "false",
-        "allow_exceed": "false",
-        "amount": `${amount}`,
-        "callback_url": "https://api.hitrip.mn/trip/list",
-        "tax_customer_code": "5395305"
-    };
-    console.log('Qpay query', postData);
-    axios.post('https://merchant.qpay.mn/v2/invoice', postData, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => {
-        console.log('Invoice Response:', response.data);
-        return {'qstatus': 'success', data: response.data};
-    })
-    .catch(error => {
-        console.error('Invoice Error:', error.response.data);
-        return {'qstatus': 'error', data: error.response.data};
+    return new Promise((resolve, reject) => {
+        const invoiceId = uuidv4();
+        const postData = {
+            "invoice_code": "TEST_INVOICE",
+            "sender_invoice_no": invoiceId,
+            "invoice_receiver_code": `${userData.fbid}`, // ?? 
+            "sender_branch_code":"APP",
+            "invoice_description": tripCode,
+            "enable_expiry": "false",
+            "allow_partial": "false",
+            "allow_exceed": "false",
+            "amount": `${amount}`,
+            "callback_url": "https://api.hitrip.mn/trip/list",
+            "tax_customer_code": "5395305"
+        };
+        console.log('Qpay query', postData);
+        axios.post('https://merchant.qpay.mn/v2/invoice', postData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            console.log('Invoice Response:', response.data);
+            resolve({'qstatus': 'success', data: response.data});
+        })
+        .catch(error => {
+            console.error('Invoice Error:', error);
+            reject(error);
+        });
     });
 }
 
