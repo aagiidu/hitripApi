@@ -100,13 +100,13 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
     const postData = {
         "invoice_code": "TEST_INVOICE",
         "sender_invoice_no": invoiceId,
-        "invoice_receiver_code": userData.fbid, // ?? 
+        "invoice_receiver_code": `${userData.fbid}`, // ?? 
         "sender_branch_code":"APP",
         "invoice_description": tripCode,
-        "enable_expiry": false,
-        "allow_partial": false,
-        "allow_exceed": false,
-        "amount": amount,
+        "enable_expiry": "false",
+        "allow_partial": "false",
+        "allow_exceed": "false",
+        "amount": `${amount}`,
         "callback_url": "https://api.hitrip.mn/trip/list",
         "tax_customer_code": "5395305"
     };
