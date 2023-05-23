@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { uuid } = require('uuidv4');
+import { v4 as uuid } from 'uuid';
 const mongoose= require('mongoose');
 require("../models/FbUser");
 require("../models/Zar");
@@ -90,8 +90,8 @@ requestInvoice = async (req, res) => {
         return res.status(200).send({status: 'success', data: qres.data, tripCode, amount });
     })
     .catch(error => {
-        console.error('requestInvoice Error:', error.response.data);
-        return res.status(200).send({status: 'error', data: error.response.data, tripCode, amount });
+        console.error('requestInvoice Error:', error);
+        return res.status(200).send({status: 'error', data: error, tripCode, amount });
     });
 }
 
