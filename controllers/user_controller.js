@@ -87,8 +87,10 @@ requestInvoice = async (req, res) => {
         const token = response.data.access_token
         console.log('Qpay #1');
         const qres = await getInvoiceFromQpay(token, userData, tripCode, amount)
-        console.log('Qpay #2', qres);
-        return res.status(200).send({status: 'success', data: qres, tripCode, amount });
+        if(qres){
+            console.log('Qpay #2', qres);
+            return res.status(200).send({status: 'success', data: qres, tripCode, amount });
+        }
     })
     .catch(error => {
         console.error('requestInvoice Error:', error);
