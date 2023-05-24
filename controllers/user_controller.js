@@ -3,8 +3,10 @@ const { v4: uuidv4 } = require('uuid');
 const mongoose= require('mongoose');
 require("../models/FbUser");
 require("../models/Zar");
+require("../models/Invoice");
 const FbUser = mongoose.model("FbUser");
 const Zar = mongoose.model("Zar");
+const Invoice = mongoose.model("Invoice");
 var ObjectId = require('mongodb').ObjectId;
 
 const username = 'TEST_MERCHANT';
@@ -103,10 +105,11 @@ getTokenFromQpay = async () => {
 getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
     return new Promise((resolve, reject) => {
         const invoiceId = uuidv4();
+        const { fbid } = userData;
         const postData = {
             "invoice_code": "TEST_INVOICE",
             "sender_invoice_no": invoiceId,
-            "invoice_receiver_code": `${userData.fbid}`, // ?? 
+            "invoice_receiver_code": `${fbid}`, // ?? 
             "sender_branch_code":"APP",
             "invoice_description": tripCode,
             "enable_expiry": "false",
@@ -123,10 +126,13 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => {
+        .then(async response => {
             let q = response.data;
             delete q.qr_text
             delete q.qr_image
+            const inv = await Invoice.create({
+                fbid, invoiceId, tripCode, amount
+            })
             console.log('Invoice Response:', q);
             resolve(q);
         })
@@ -137,7 +143,10 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
     });
 }
 
-
+qpayCallBack = async (req, res) => {
+    const { invoiceId } = req.params;
+    console.log('qpayCallBack', invoiceId)
+}
 
 module.exports = {
     getUserData,
@@ -147,5 +156,6 @@ module.exports = {
     deleteAllZar,
     verifyToken,
     turnOnOff,
-    requestInvoice
+    requestInvoice,
+    qpayCallBack
 }
