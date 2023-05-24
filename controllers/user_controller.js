@@ -149,7 +149,7 @@ qpayCallBack = async (req, res) => {
 }
 
 cancelInvoice = async (req, res) => {
-    const { invoiceId } = req.body
+    const { invoiceId } = req.params
     const token = await getTokenFromQpay();
     let delres;
     axios.delete(`https://merchant.qpay.mn/v2/invoice/${invoiceId}`, {
