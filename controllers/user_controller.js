@@ -151,6 +151,7 @@ qpayCallBack = async (req, res) => {
 cancelInvoice = async (req, res) => {
     const { invoiceId } = req.body
     const token = await getTokenFromQpay();
+    let delres;
     axios.delete(`https://merchant.qpay.mn/v2/invoice/${invoiceId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -159,13 +160,14 @@ cancelInvoice = async (req, res) => {
         })
         .then(async response => {
             let q = response.data;
-            const delres = await Invoice.deleteOne({invoiceId})
+            delres = await Invoice.deleteOne({invoiceId});
             console.log('Invoice Response:', q);
             return res.status(200).send({status: 'success', data: q, delres });
         })
-        .catch(error => {
-            console.error('Invoice Error:', error);
-            return res.status(200).send({status: 'error', data: error });
+        .catch(async error => {
+            console.error('Invoice Error:', error.response.data);
+            delres = await Invoice.deleteOne({invoiceId});
+            return res.status(200).send({status: 'error', data: error.response.data, delres });
         });
     
 }
