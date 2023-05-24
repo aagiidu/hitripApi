@@ -104,11 +104,11 @@ getTokenFromQpay = async () => {
 
 getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
     return new Promise((resolve, reject) => {
-        const invoiceId = uuidv4();
+        const invoiceNo = uuidv4();
         const { fbid } = userData;
         const postData = {
             "invoice_code": "TEST_INVOICE",
-            "sender_invoice_no": invoiceId,
+            "sender_invoice_no": invoiceNo,
             "invoice_receiver_code": `${fbid}`, // ?? 
             "sender_branch_code":"APP",
             "invoice_description": tripCode,
@@ -130,6 +130,7 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
             let q = response.data;
             delete q.qr_text
             delete q.qr_image
+            const invoiceId = q.invoice_id
             const inv = await Invoice.create({
                 fbid, invoiceId, tripCode, amount
             })
