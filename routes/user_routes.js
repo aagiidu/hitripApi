@@ -12,5 +12,6 @@ router.get('/verify/token', UserController.verifyToken);
 router.post('/toggle/status', UserController.turnOnOff);
 router.post('/request/invoice', UserController.requestInvoice);
 router.get('/check/payment/:invoiceId', UserController.qpayCallBack);
+router.get('/cancel/invoice/:invoiceId', UserController.cancelInvoice);
 
 module.exports = router;
