@@ -29,11 +29,13 @@ require("./models/FbUser");
 require("./models/Zar");
 require('./models/Blog');
 require("./models/Invoice");
+require("./models/Trip");
 const Zar = mongoose.model("Zar");
 const User = mongoose.model("User");
 const FbUser = mongoose.model("FbUser");
 const Blog = mongoose.model("Blog");
 const Invoice = mongoose.model("Invoice");
+const Trip = mongoose.model("Trip");
 
 mongoose.connect(MONGODB_URL, {
   useNewUrlParser: true,
