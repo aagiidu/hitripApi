@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const InvoiceSchema = new mongoose.Schema({
     fbid: {type: Number, required:true},
+    invoiceNo: {type: String, required:true},
     invoiceId: {type: String, required:true},
     tripCode: {type: String, required:true},
     amount: {type: Number, required:true},

@@ -4,7 +4,8 @@ const mongoose= require('mongoose');
 const jwt = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
 const cors = require('cors');
-const port = process.env.PORT || 3000;
+const path = require('path');
+const port = process.env.PORT || 2000;
 const app = express();
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 const JWT_SECRET=process.env.jwt;
 const MONGODB_URL=process.env.mongodb;
@@ -26,10 +28,12 @@ require("./models/User");
 require("./models/FbUser");
 require("./models/Zar");
 require('./models/Blog');
+require("./models/Invoice");
 const Zar = mongoose.model("Zar");
 const User = mongoose.model("User");
 const FbUser = mongoose.model("FbUser");
 const Blog = mongoose.model("Blog");
+const Invoice = mongoose.model("Invoice");
 
 mongoose.connect(MONGODB_URL, {
   useNewUrlParser: true,
@@ -120,6 +124,56 @@ app.get('/blog/list', async (req, res) => {
     return res.send({status: 'success', data: response });
 });
 
+app.get('/payment/callback/:invoiceNo', async (req, res) => {
+    const { invoiceNo } = req.params;
+    console.log('qpayCallBack', invoiceNo)
+    let paymentResponse = await checkPayment(await Invoice.findOne({invoiceNo}));
+    return res.send({ status: 'success', data: paymentResponse });
+    // return res.send({ status: 'success' });
+});
+
+app.get('/payment/check/:invoiceId', async (req, res) => {
+    const { invoiceId } = req.params;
+    console.log('payment check', invoiceId)
+    let paymentResponse = await checkPayment(await Invoice.findOne({invoiceId}));
+    return res.send({ status: 'success', data: paymentResponse });
+});
+
+const checkPayment = async (invoice) => {
+    return new Promise(async (resolve, reject) => {
+        if(!invoice){
+            reject('invoice is null');
+        }
+        const query = {
+            "object_type": "INVOICE",
+            "object_id"  : invoice.invoiceId,
+            "offset"     : {
+                "page_number": 1,
+                "page_limit" : 100
+            }
+        }
+        const token = await helper.getTokenFromQpay();
+        axios.post('https://merchant.qpay.mn/v2/payment/check', query, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(async response => {
+            let q = response.data;
+            if(q.paid_amount){
+                resolve(`paid ${q.paid_amount}`);
+            }else{
+                resolve('unpaid');
+            }
+        })
+        .catch(error => {
+            console.error('Invoice Error:', error);
+            reject(error);
+        });
+    });
+}
+
 const verifyToken = (req, res, next) => {
     try {
         // res.send({headers: req.headers})
@@ -133,7 +187,7 @@ const verifyToken = (req, res, next) => {
         const verify = jwt.verify(token, JWT_SECRET);
         console.log('verifyToken', verify);
         if(verify){
-            // console.log('userdatafromtoken', verify);
+            console.log('userdatafromtoken', verify);
             req.body.userData = verify;
             req.body.token = token;
             return next();
@@ -147,7 +201,7 @@ const verifyToken = (req, res, next) => {
 }
 
 app.use('/user', verifyToken, UserRoute);
-app.use('/admin', verifyToken, AdminRoute);
+app.use('/admin', AdminRoute);
 
 app.listen(port,()=>{
     console.log(`Running on port ${port}`);

@@ -8,9 +8,8 @@ const FbUser = mongoose.model("FbUser");
 const Zar = mongoose.model("Zar");
 const Invoice = mongoose.model("Invoice");
 var ObjectId = require('mongodb').ObjectId;
+const helper = require('../utils/helper')
 
-const username = 'TEST_MERCHANT';
-const password = '123456';
 
 getUserData = async (req, res) => {
     const { userData, token } = req.body
@@ -75,12 +74,12 @@ turnOnOff = async (req, res) => {
 requestInvoice = async (req, res) => {
     const { userData, tripCode, amount } = req.body
     // const user = await FbUser.findOne({fbid: userData.fbid}).lean();
-    const token = await getTokenFromQpay();
+    const token = await helper.getTokenFromQpay();
     const invoice = await getInvoiceFromQpay(token, userData, tripCode, amount);
     return res.status(200).send({status: 'success', data: invoice });
 }
 
-getTokenFromQpay = async () => {
+/* getTokenFromQpay = async () => {
     return new Promise((resolve, reject) => {
         const authHeader = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
         axios.post('https://merchant.qpay.mn/v2/auth/token', {}, {
@@ -100,7 +99,7 @@ getTokenFromQpay = async () => {
         });
         
     });
-}
+} */
 
 getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
     return new Promise((resolve, reject) => {
@@ -116,7 +115,7 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
             "allow_partial": "false",
             "allow_exceed": "false",
             "amount": `${amount}`,
-            "callback_url": "https://api.hitrip.mn/trip/list",
+            "callback_url": `https://api.hitrip.mn/payment/callback/${invoiceNo}`,
             "tax_customer_code": "5395305"
         };
         console.log('Qpay query', postData);
@@ -142,11 +141,6 @@ getInvoiceFromQpay = async (token, userData, tripCode, amount) => {
             reject(error);
         });
     });
-}
-
-qpayCallBack = async (req, res) => {
-    const { invoiceId } = req.params;
-    console.log('qpayCallBack', invoiceId)
 }
 
 cancelInvoice = async (req, res) => {
@@ -182,6 +176,5 @@ module.exports = {
     verifyToken,
     turnOnOff,
     requestInvoice,
-    qpayCallBack,
     cancelInvoice
 }
