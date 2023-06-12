@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || 3000;
 const app = express();
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
