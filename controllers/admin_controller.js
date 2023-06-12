@@ -102,9 +102,9 @@ addTrip = async (req, res) => {
             marshrut,
             desc,
             images: [
-                'https://hitrip.mn/photos/' + code + '_1.jpg', 
-                'https://hitrip.mn/photos/' + code + '_2.jpg',
-                'https://hitrip.mn/photos/' + code + '_3.jpg'
+                'https://hitrip.mn/photos/trip/' + code + '_1.jpg', 
+                'https://hitrip.mn/photos/trip/' + code + '_2.jpg',
+                'https://hitrip.mn/photos/trip/' + code + '_3.jpg'
             ],
             featured,
             active 
