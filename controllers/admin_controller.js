@@ -101,10 +101,15 @@ addTrip = async (req, res) => {
             chiglel,
             marshrut,
             desc,
-            image: 'https://api.hitrip.mn/images/' + req.file.filename,
+            images: [
+                'https://hitrip.mn/photos/' + code + '_1.jpg', 
+                'https://hitrip.mn/photos/' + code + '_2.jpg',
+                'https://hitrip.mn/photos/' + code + '_3.jpg'
+            ],
             featured,
             active 
         })
+        // image: 'https://api.hitrip.mn/images/' + req.file.filename,
         return res.status(200).send({status: 'success', data: response});
     } catch (error) {
         return res.status(200).send({status: 'error', data: error});

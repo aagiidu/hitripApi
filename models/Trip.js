@@ -8,7 +8,7 @@ const TripSchema = new mongoose.Schema({
     chiglel: {type: String},
     marshrut: {type: String},
     desc: {type: String},
-    image: {type: String},
+    images: {type: Array},
     featured: {type: Number, default: 0},
     active: {type: Number, default: 1},
     timestamp: {type: Date, default: new Date()}
