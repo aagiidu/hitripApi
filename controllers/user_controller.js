@@ -8,7 +8,8 @@ const FbUser = mongoose.model("FbUser");
 const Zar = mongoose.model("Zar");
 const Invoice = mongoose.model("Invoice");
 var ObjectId = require('mongodb').ObjectId;
-const helper = require('../utils/helper')
+const helper = require('../utils/helper');
+const Trip = require('../models/Trip');
 
 
 getUserData = async (req, res) => {
@@ -167,6 +168,12 @@ cancelInvoice = async (req, res) => {
     
 }
 
+tripList = async (req, res) => {
+    // const userData = req.body.userData;
+    const response = await Trip.find({active: 1}).sort({featured: -1, _id: -1}).limit(100);
+    return res.send({status: 'success', data: response});
+}
+
 module.exports = {
     getUserData,
     addZar,
@@ -176,5 +183,6 @@ module.exports = {
     verifyToken,
     turnOnOff,
     requestInvoice,
-    cancelInvoice
+    cancelInvoice,
+    tripList
 }

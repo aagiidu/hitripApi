@@ -200,6 +200,11 @@ const verifyToken = (req, res, next) => {
     }
 }
 
+app.get('/trip/list', async (req, res) => {
+    const response = await Trip.find({active: 1}).sort({featured: -1, _id: -1}).limit(100);
+    return res.send({status: 'success', data: response});
+});
+
 app.use('/user', verifyToken, UserRoute);
 app.use('/admin', AdminRoute);
 
