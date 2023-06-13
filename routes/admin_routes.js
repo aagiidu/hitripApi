@@ -19,8 +19,16 @@ router.post('/blog/update', AdminController.updateBlog);
 router.post('/blog/delete', AdminController.deleteBlog);
 router.post('/blog/delete/all', AdminController.deleteAllBlog);
 
-router.post('/trip/add', upload.single('image'), AdminController.addTrip);
-router.post('/trip/update', upload.single('image'), AdminController.updateTrip);
+router.post('/trip/add', upload.fields([
+  { name: 'image1', maxCount: 1 },
+  { name: 'image2', maxCount: 1 },
+  { name: 'image3', maxCount: 1 },
+]), AdminController.addTrip);
+router.post('/trip/update', upload.fields([
+  { name: 'image1', maxCount: 1 },
+  { name: 'image2', maxCount: 1 },
+  { name: 'image3', maxCount: 1 },
+]), AdminController.updateTrip);
 router.post('/trip/delete', AdminController.deleteTrip);
 
 module.exports = router;

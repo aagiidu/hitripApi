@@ -73,7 +73,6 @@ const verifyToken = (req) => {
             return false;
         }
         let verify = jwt.verify(token, JWT_SECRET);
-        console.log('verify', verify)
         if(!verify || verify.type !== 'admin'){
             return false
         }
@@ -86,45 +85,37 @@ const verifyToken = (req) => {
 
 addTrip = async (req, res) => {
     let result = verifyToken(req)
-    console.log(result)
     if(!result){
-        return res.status(200).send({status: 'error', data: 'Зөвхөн админ мэдээлэл оруулна'});
+        return res.status(200).send({status: 'error', data: 'bad token'});
     }
     const {  code, name, honog, urt, chiglel, marshrut, desc, featured, active } = req.body
-
+    let images = []
+    if(req.files.image1) images.push(`https://api.hitrip.mn/images/${req.files.image1[0].filename}`)
+    if(req.files.image2) images.push(`https://api.hitrip.mn/images/${req.files.image2[0].filename}`)
+    if(req.files.image2) images.push(`https://api.hitrip.mn/images/${req.files.image3[0].filename}`)
     try {
-        const response = await Trip.create({
-            code,
-            name,
-            honog,
-            urt,
-            chiglel,
-            marshrut,
-            desc,
-            images: [
-                'https://hitrip.mn/photos/trip/' + code + '_1.jpg', 
-                'https://hitrip.mn/photos/trip/' + code + '_2.jpg',
-                'https://hitrip.mn/photos/trip/' + code + '_3.jpg'
-            ],
-            featured,
-            active 
-        })
-        // image: 'https://api.hitrip.mn/images/' + req.file.filename,
+        const response = await Trip.create({ code, name, honog, urt, chiglel, marshrut, desc, images, featured, active })
         return res.status(200).send({status: 'success', data: response});
     } catch (error) {
         return res.status(200).send({status: 'error', data: error});
-    }
+    } 
 }
 
 updateTrip = async (req, res) => {
-    const { id, title, description, image, userData } = req.body
-    if(userData.type !== 'admin'){
-        return res.status(200).send({status: 'error', data: 'Зөвхөн админ засвар оруулна'});
+    let result = verifyToken(req)
+    if(!result){
+        return res.status(200).send({status: 'error', data: 'bad token'});
     }
+    const { id, code, name, honog, urt, chiglel, marshrut, desc, featured, active } = req.body
+    let images = []
+    if(req.files.image1) images.push(`https://api.hitrip.mn/images/${req.files.image1[0].filename}`)
+    if(req.files.image2) images.push(`https://api.hitrip.mn/images/${req.files.image2[0].filename}`)
+    if(req.files.image2) images.push(`https://api.hitrip.mn/images/${req.files.image3[0].filename}`)
     try {
-        const response = await Blog.updateOne({_id: new ObjectId(id)}, {$set: {
-            title, description, image
-        }});
+        const response = await Trip.updateOne(
+            {_id: new ObjectId(id)}, 
+            {$set: { code, name, honog, urt, chiglel, marshrut, desc, images, featured, active }}
+        );
         return res.status(200).send({status: 'success', data: response});
     } catch (error) {
         return res.status(200).send({status: 'error', data: error});
@@ -132,12 +123,13 @@ updateTrip = async (req, res) => {
 }
 
 deleteTrip = async (req, res) => {
-    const {id, userData} = req.body;
-    if(userData.type !== 'admin'){
-        return res.status(200).send({status: 'error', data: 'Энэ үйлдлийн зөвхөн админ хийнэ'});
+    let result = verifyToken(req)
+    if(!result){
+        return res.status(200).send({status: 'error', data: 'bad token'});
     }
-    const deleted = await Blog.deleteOne({_id: new ObjectId(id)});
-    const response = await Blog.find({}).sort({_id: -1}).limit(100);
+    const {id} = req.body;
+    const deleted = await Trip.deleteOne({_id: new ObjectId(id)});
+    const response = await Trip.find({}).sort({_id: -1}).limit(100);
     return res.send({status: 'success', data: response, deleted});
 }
 

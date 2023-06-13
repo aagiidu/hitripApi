@@ -92,7 +92,7 @@ const verifyUserLogin = async (phone, password) => {
         if(await bcrypt.compare(password,user.password)){
             user.type = 'admin';
             const token = signToken(user);
-            return {status:'ok', data:token}
+            return {status:'success', data:token}
         }
         return {status:'error',error:'Нэвтрэх мэдээлэл буруу байна'}
     } catch (error) {
@@ -109,7 +109,7 @@ const signToken = (data) => {
 app.post('/login', async (req, res) => {
     const {phone, password} = req.body;
     const response = await verifyUserLogin(phone, password);
-    if(response.status === 'ok'){
+    if(response.status === 'success'){
         res.json(response);
     }else{
         res.json(response);
@@ -184,7 +184,7 @@ const verifyToken = (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
         }
         if(!token) {
-            return res.send({status:'error',error:'no token'});
+            return res.send({status:'error',error:'bad token'});
         }
         const verify = jwt.verify(token, JWT_SECRET);
         console.log('verifyToken', verify);
